@@ -48,5 +48,13 @@
 		//echo $torol;
 		mysql_query("$torol");
 	}
+	
+	function checkDateTime($data) {
+    if (date('Y-m-d', strtotime($data)) == $data) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 ?>

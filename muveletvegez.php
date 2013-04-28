@@ -250,9 +250,38 @@
 	if(isset($_POST['klubnev'])	&&	isset($_POST['alapitva'])	&&	isset($_POST['klubazn']))
 	{
 		include("functions.php");
-		klub_modosit($_POST['klubnev'], $_POST['alapitva'], $_POST['klubazn']);
+		$errors=array();
+		if(empty($_POST['klubnev'])	||	empty($_POST['alapitva']))
+		{
+			$errors[]="Minden mezőt ki kell tölteni!";
+		}
+		if(strlen($_POST['klubnev'])>25)
+		{
+			$errors[]="Klubnév túl hosszú!";
+		}
+		if(strlen($_POST['klubnev'])<4)
+		{
+			$errors[]="Klubnév túl rövid!";
+		}
+		if(checkDateTime($_POST['alapitva']))
+		{echo "Dátum";}else{$errors[]="Nem dátum! A helyes formátum: 2012-01-01";}
 		
-		header("location: index.php");
+		if(!empty($errors))
+		{
+			foreach($errors as $error)
+			{
+				echo "<strong>" . $error . "</strong><br>";
+			}
+			$kuld="muveletvegez.php?b=" . $_POST['klubazn'] . "";
+			echo "<form action=\"$kuld\" method=\"post\">";
+				echo "<input type=\"submit\" name=\"submit\" value=\"Vissza\">";
+			echo "</form>";
+		}
+		else
+		{
+			klub_modosit($_POST['klubnev'], $_POST['alapitva'], $_POST['klubazn']);
+			header("location: index.php");
+		}
 	}
 
 
@@ -260,9 +289,36 @@
 	if(isset($_POST['ki'])	&&	isset($_POST['honnan'])	&&	isset($_POST['hova'])	&&	isset($_POST['mikor'])	&&	isset($_POST['mennyiert'])	&&	isset($_POST['atig']))
 	{
 		include("functions.php");
-		atig_modosit($_POST['ki'], $_POST['honnan'], $_POST['hova'], $_POST['mikor'], $_POST['mennyiert'], $_POST['atig']);
 		
-		header("location: index.php");
+		$errors=array();
+		if(!checkDateTime($_POST['mikor']))
+		{$errors[]="Nem dátum! A helyes formátum: 2012-01-01";}
+		if(!is_numeric($_POST['mennyiert']))
+		{
+			$errors[]="Az árnak számnak kell lennie!";
+		}else
+		{
+			if($_POST['mennyiert']<1	|| $_POST['mennyiert']>1000000)
+			{
+				$errors[]="Az árnak 0-1.000.000 közé kell esnie!";
+			}
+		}
+		if(!empty($errors))
+		{
+			foreach($errors as $error)
+			{
+				echo "<strong>" . $error . "</strong><br>";
+			}
+			$kuld="muveletvegez.php?c=" . $_POST['atig'] . "";
+			echo "<form action=\"$kuld\" method=\"post\">";
+				echo "<input type=\"submit\" name=\"submit\" value=\"Vissza\">";
+			echo "</form>";
+		}
+		else
+		{
+			atig_modosit($_POST['ki'], $_POST['honnan'], $_POST['hova'], $_POST['mikor'], $_POST['mennyiert'], $_POST['atig']);
+			header("location: index.php");
+		}
 	}
 	
 	
